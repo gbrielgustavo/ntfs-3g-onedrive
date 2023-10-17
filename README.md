@@ -42,7 +42,7 @@ The plugin files should be copied to your ntfs-3g lib folder, but sometimes this
 
 In this case, you check the output of the *make install* command to identify where the files were installed.
 
-Then you copy the .so (and maybe the .la) file to the right path (*sudo cp /pathto.SOfile/.SOfile /pathtoNTFS-3gLibs/.SOfile*)
+Then you copy the .so (and maybe the .la) file to the right path (*sudo cp /pathTo.soFile/*.SOfile /pathtoNTFS-3gLibs/*.soFile*)
 
 In fedora 38 it was */usr/lib64/ntfs-3g*, but you should check in your distro
 
