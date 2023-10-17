@@ -37,7 +37,8 @@ make
 sudo make install
 ```
 
-#Important
+# Important
+
 The plugin files should be copied to your ntfs-3g lib folder, but sometimes this doesn't happen.
 
 In this case, you check the output of the *make install* command to identify where the files were installed.
