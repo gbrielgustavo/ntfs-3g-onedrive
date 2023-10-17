@@ -1,0 +1,90 @@
+This archive contains the source code for accessing through ntfs-3g OneDrive
+directories created by Windows 10.
+
+The feature has been implemented as a plugin to be used from ntfs-3g, thus
+retaining the original organization in Windows. Its loading is delayed
+until some OneDrive directory is accessed. The minimum version of ntfs-3g
+which can use the plugin is 2017.3.23AR.4
+
+When the plugin is activated, only the local copy of OneDrive files (those
+configured on Windows as "always keep on this device") and subdirectories
+can be accessed. The files only stored on the cloud (configured as "free
+up space") cannot be accessed. Also no file or directory can be created
+or removed from the OneDrive directory tree.
+
+There is no synchronization with the cloud copy of OneDrive files and
+directories by ntfs-3g. Files updated within OneDrive will only be
+synchronized when they are accessed subsequently from Windows. Those existing
+files which were synchronized and then updated through ntfs-3g can only be
+synchronized subsequently provided the update procedure keeps the
+synchronization parameters. Note that when most text editors update a file,
+they create a new temporary file which is later renamed to the original name,
+thus overwriting the synchronization parameters, and making subsequent
+synchronization impossible.
+
+For compiling the plugin from source, apply the standard procedure :
+        ./configure
+        make
+        # as root :
+        make install
+
+The archive also contains the binary plugins for Linux and OpenIndiana
+for X86 CPUs in 32-bit and 64-bit modes, and for Linux ARM CPU in 32-bit
+and 64-bit modes. They have to be moved to a system directory which depends
+on the distribution policy and is defined when ntfs-3g is built. Usually
+this is :
+
+/usr/lib/ntfs-3g/ntfs-plugin-9000001a.so            for Linux 32-bit
+/usr/lib64/ntfs-3g/ntfs-plugin-9000001a.so          for Linux 64-bit
+/usr/lib/ntfs-3g/ntfs-plugin-9000001a.so            for OpenIndiana 32-bit
+/usr/lib/amd64/ntfs-3g/ntfs-plugin-9000001a.so      for OpenIndiana 64-bit
+
+A simple way to determine the plugin directory is to query where libntfs-3g
+is loaded from, by running the command (examples below) :
+        ldd $(which ntfs-3g)
+
+Another way to determine the directory, is to run the command :
+        strings $(which ntfs-3g) | grep ntfs-plugin
+This will return the pattern used by ntfs-3g to load the plugin. If you
+get something like "/usr/lib64/ntfs-3g/ntfs-plugin-%08lx.so" then the
+plugin must be renamed as "/usr/lib64/ntfs-3g/ntfs-plugin-9000001a.so".
+
+The ways shown above assume ntfs-3g was installed. When using a test
+version with ntfs-3g not installed, the directory generally is
+/usr/local/lib/ntfs-3g
+
+Either way, if the directory is not present, you have to create it.
+
+Example 1 :
+
+$ ldd $(which ntfs-3g)
+        linux-vdso.so.1 (0x00007ffc83dd9000)
+        libdl.so.2 => /lib64/libdl.so.2 (0x00007fdfb9486000)
+        libpthread.so.0 => /lib64/libpthread.so.0 (0x00007fdfb9269000)
+        libntfs-3g.so.872 => /lib64/libntfs-3g.so.872 (0x00007fdfb901c000)
+        libc.so.6 => /lib64/libc.so.6 (0x00007fdfb8c5b000)
+        /lib64/ld-linux-x86-64.so.2 (0x00007fdfb96af000)
+
+In this case, the fourth output line shows libntfs-3g is loaded from :
+        /lib64/libntfs-3g.so.872
+so ntfs-plugin-9000001a.so must be copied to the directory /lib64/ntfs-3g :
+        /lib64/ntfs-3g/ntfs-plugin-9000001a.so
+
+
+Example 2 :
+
+$ ldd $(which ntfs-3g)
+        linux-vdso.so.1 (0x7efad000)
+        /usr/lib/arm-linux-gnueabihf/libarmmem.so (0x76ee3000)
+        libpthread.so.0 => /lib/arm-linux-gnueabihf/libpthread.so.0 (0x76eb4000)
+        libntfs-3g.so.861 => /lib/arm-linux-gnueabihf/libntfs-3g.so.861 (0x76e68000)
+        libc.so.6 => /lib/arm-linux-gnueabihf/libc.so.6 (0x76d2b000)
+        /lib/ld-linux-armhf.so.3 (0x54b53000)
+
+In this case the fourth output line shows libntfs-3g is loaded from :
+        /lib/arm-linux-gnueabihf/libntfs-3g.so.861
+so ntfs-plugin-9000001a.so must be copied to /lib/arm-linux-gnueabihf/ntfs-3g :
+        /lib/arm-linux-gnueabihf/ntfs-3g/ntfs-plugin-9000001a.so
+
+The plugin should be made executable (permissions 0555) and owned by
+root:root on Linux (or root:bin on OpenIndiana).
