@@ -30,9 +30,13 @@ make
 sudo make install
 ```
 
+#Important
 The plugin files should be copied to your ntfs-3g lib folder, but sometimes this doesn't happen.
+
 In this case, you check the output of the *make install* command to identify where the files were installed.
-Then you copy the .so (and maybe the .la) file to the right path.
-In fedora 38 it was */usr/lib64/ntfs-3g*
+
+Then you copy the .so (and maybe the .la) file to the right path (*sudo cp /pathto.SOfile/.SOfile /pathtoNTFS-3gLibs/.SOfile*)
+
+In fedora 38 it was */usr/lib64/ntfs-3g*, but you should check in your distro
 
 Now you should be abble to access your onedrive files.
