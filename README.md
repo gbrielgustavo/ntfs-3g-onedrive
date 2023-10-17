@@ -12,7 +12,14 @@ libtool
 fuse
 fuse-libs
 ```
+Depending on your system you make need other dependencies that are not listed here.
 
+
+Clone the repository and acess the folder:
+```
+git clone https://github.com/gbrielgustavo/ntfs-3g-onedrive/
+cd ntfs-3g-onedrive
+```
 
 Then you must config the makefile
 ```
